@@ -3,5 +3,30 @@
 {% block conteudo %}
 
 <h2>Cadastro</h2>
+<h3>Faça seu cadastro:</h3> 
+<br> 
+
+<form action="/cadastro/cadastrar" method = "POST">
+
+    <label>Nome:</label>
+    <input type="text" name="nome" required>
+    <br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    <br><br>
+
+    <label>Usuário:</label>
+    <input type="text" name="usuario" required>
+    <br><br>
+
+    <label>Senha:</label>
+    <input type="password" name="senha" required>
+    <br><br>
+
+    <button type="submit">Cadastrar</button>
+    <br><br>
+
+</form>
 
 {% endblock %}

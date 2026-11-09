@@ -6,17 +6,21 @@
 <h3>Faça seu login:</h3> 
 <br> 
 
-<label>Usuário:</label>
-<input id="codigo">
-<br><br>
+<form action="/login/logar" method = "POST">
 
-<label>Senha:</label>
-<input id="nome">
-<br><br>
+    <label>Email:</label>
+    <input type="email" name="email" required>
+    <br><br>
 
-<button type="submit">Entrar</button>
-<br><br>
+    <label>Senha:</label>
+    <input type="password" name="senha" required>
+    <br><br>
 
-<a href="{{url_for('cadastro.renderizar_cadastro')}}">Sem login? Cadastre-se aqui</a>
+    <button type="submit">Entrar</button>
+    <br><br>
+
+    <a href="{{url_for('cadastro.renderizar_cadastro')}}">Sem login? Cadastre-se aqui</a>
+
+</form>
 
 {% endblock %}

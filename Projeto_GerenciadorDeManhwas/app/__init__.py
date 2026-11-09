@@ -1,4 +1,6 @@
 from flask import Flask
+from app.models.cadastro import Cadastro
+from app.models.obras import Obras
 
 def create_app():
     
@@ -12,5 +14,12 @@ def create_app():
 
     from app.controllers.cadastro_controller import cadastro_bp
     app.register_blueprint(cadastro_bp)
+
+    from app.controllers.obras_controller import obras_bp
+    app.register_blueprint(obras_bp)
+
+    Cadastro.Criar_tabela()
+
+    Obras.Criar_tabela()
 
     return app
