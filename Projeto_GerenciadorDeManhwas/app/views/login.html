@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
 <h2>Login</h2>
 <h3>Faça seu login:</h3> 
 <br> 
@@ -13,4 +17,6 @@
 <button type="submit">Entrar</button>
 <br><br>
 
-<a href="#">Sem login? Cadastre-se aqui</a>
+<a href="{{url_for('cadastro.renderizar_cadastro')}}">Sem login? Cadastre-se aqui</a>
+
+{% endblock %}
