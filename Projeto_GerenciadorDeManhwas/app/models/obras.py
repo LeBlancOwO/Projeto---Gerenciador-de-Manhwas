@@ -1,3 +1,4 @@
+from app.models.conexao import Conexao
 import sqlite3
 
 class Obras:
@@ -8,57 +9,43 @@ class Obras:
         self.status = status
 
     @staticmethod
-    def Conectar():
-        return sqlite3.connect("banco.db")
-
-    @staticmethod
     def Criar_tabela():
 
-        conn = Obras.Conectar()
-        cursor = conn.cursor()
+        with Conexao() as cursor:
 
-        cursor.execute(""" 
-            CREATE TABLE IF NOT EXISTS Obras(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo vARCHAR(150) NOT NULL,
-            autor VARCHAR(100) NOT NULL,
-            status text NOT NULL
-            )
-        """)
-
-        conn.commit()
-        conn.close()
+            cursor.execute(""" 
+                CREATE TABLE IF NOT EXISTS Obras(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                titulo vARCHAR(150) NOT NULL,
+                autor VARCHAR(100) NOT NULL,
+                status text NOT NULL
+                )
+            """)
 
     def Salvar(self):
-        conn = Obras.Conectar()
-        cursor = conn.cursor()
 
-        cursor.execute("""
-            INSERT INTO Obras
-            (titulo, autor, status)
-            VALUES (?, ?, ?)
-        """, (
-            self.titulo,
-            self.autor,
-            self.status
-        ))
+        with Conexao() as cursor:
 
-        conn.commit()
-        conn.close()
+            cursor.execute("""
+                INSERT INTO Obras
+                (titulo, autor, status)
+                VALUES (?, ?, ?)
+            """, (
+                self.titulo,
+                self.autor,
+                self.status
+            ))
 
     @staticmethod
     def Listar():
 
-        conn = Obras.Conectar()
-        cursor = conn.cursor()
+        with Conexao() as cursor:
 
-        cursor.execute("""
-            SELECT *
-            FROM Obras
-        """)
+            cursor.execute("""
+                SELECT *
+                FROM Obras
+            """)
 
-        dados = cursor.fetchall()
-
-        conn.close()
+            dados = cursor.fetchall()
 
         return dados

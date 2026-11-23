@@ -1,3 +1,4 @@
+from app.models.conexao import Conexao
 import sqlite3
 
 class Cadastro:
@@ -9,60 +10,47 @@ class Cadastro:
         self.senha = senha
 
     @staticmethod
-    def Conectar():
-        return sqlite3.connect("banco.db")
-
-    @staticmethod
     def Criar_tabela():
-        conn = Cadastro.Conectar()
-        cursor = conn.cursor()
 
-        cursor.execute(""" 
-            CREATE TABLE IF NOT EXISTS Cadastro(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome vARCHAR(100) NOT NULL,
-            email VARCHAR(100) NOT NULL,
-            usuario VARCHAR(100) NOT NULL,
-            senha VARCHAR(50) NOT NULL
-            )
-        """)
+        with Conexao() as cursor:
 
-        conn.commit()
-        conn.close()
+            cursor.execute(""" 
+                CREATE TABLE IF NOT EXISTS Cadastro(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome vARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                usuario VARCHAR(100) NOT NULL,
+                senha VARCHAR(50) NOT NULL
+                )
+            """)
 
     def Salvar(self):
-        conn = Cadastro.Conectar()
-        cursor = conn.cursor()
 
-        cursor.execute("""
-            INSERT INTO Cadastro
-            (nome, email, usuario, senha)
-            VALUES (?, ?, ?, ?)
-        """, (
-            self.nome,
-            self.email,
-            self.usuario,
-            self.senha
-        ))
+        with Conexao() as cursor:
 
-        conn.commit()
-        conn.close()
+            cursor.execute("""
+                INSERT INTO Cadastro
+                (nome, email, usuario, senha)
+                VALUES (?, ?, ?, ?)
+            """, (
+                self.nome,
+                self.email,
+                self.usuario,
+                self.senha
+            ))
 
     @staticmethod
     def Autenticar(email, senha):
 
-        conn = Cadastro.Conectar()
-        cursor = conn.cursor()
+        with Conexao() as cursor:
 
-        cursor.execute("""
-            SELECT *
-            FROM Cadastro
-            WHERE email = ?
-            AND senha = ?
-        """,(email, senha))
+            cursor.execute("""
+                SELECT *
+                FROM Cadastro
+                WHERE email = ?
+                AND senha = ?
+            """,(email, senha))
 
-        cadastro = cursor.fetchone()
-
-        conn.close()
+            cadastro = cursor.fetchone()
 
         return cadastro
