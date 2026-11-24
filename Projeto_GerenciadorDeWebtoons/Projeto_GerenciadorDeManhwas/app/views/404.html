@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>404 — Página não encontrada</h2>
+<p>A página que você tentou acessar não existe ou foi removida.</p>
+<a class="btn" href="{{ url_for('homepage.renderizar_homepage') }}">Voltar para a Home</a>
+{% endblock %}

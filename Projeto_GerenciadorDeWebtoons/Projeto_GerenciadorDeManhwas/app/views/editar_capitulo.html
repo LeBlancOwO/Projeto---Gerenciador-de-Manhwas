@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2>Editar Capítulo</h2>
+
+<div class="obra-card">
+    <form method="POST" action="{{ url_for('capitulos.editar_capitulo', id_capitulo=capitulo['id']) }}">
+        <label>Título do Capítulo:</label>
+        <input type="text" name="titulo" value="{{ capitulo['titulo'] }}" required>
+        <br><br>
+
+        <label>Conteúdo:</label>
+        <textarea name="conteudo" rows="10" required>{{ capitulo['conteudo'] }}</textarea>
+        <br><br>
+
+        <button type="submit" class="btn-primario">Salvar Capítulo</button>
+        <a class="btn btn-secundario" href="{{ url_for('capitulos.listar_capitulos', obra_id=capitulo['obra_id']) }}">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}

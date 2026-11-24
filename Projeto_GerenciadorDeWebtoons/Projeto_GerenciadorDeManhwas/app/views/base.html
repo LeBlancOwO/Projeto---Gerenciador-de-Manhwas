@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLB — Girls Like Books</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="tema-{{ request.cookies.get('tema', 'claro') }}">
+
+    <header class="navbar">
+        <div class="navbar-inner navbar-empilhada">
+            <a href="{{ url_for('homepage.renderizar_homepage') }}" class="brand-logo brand-logo-grande" title="GLB - Girls Like Books">
+                {% if request.cookies.get('tema', 'claro') == 'escuro' %}
+                    <img src="{{ url_for('static', filename='img/logo_escuro.png') }}" alt="GLB - Girls Like Books">
+                {% else %}
+                    <img src="{{ url_for('static', filename='img/logo_claro.png') }}" alt="GLB - Girls Like Books">
+                {% endif %}
+            </a>
+
+            <nav class="nav-links">
+                <a href="{{ url_for('homepage.renderizar_homepage') }}">Home</a>
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('obras.Biblioteca') }}">Biblioteca</a>
+                    <a href="{{ url_for('obras.Minhas_obras') }}">Minhas Obras</a>
+                    <a href="{{ url_for('mensagens.canal_mensagens') }}">
+                        Mensagens{% if mensagens_nao_lidas > 0 %}<span class="nav-badge">{{ mensagens_nao_lidas }}</span>{% endif %}
+                    </a>
+                    <a href="{{ url_for('perfil.ver_perfil') }}">Perfil</a>
+                    {% if session.get('tipo') == 'admin' %}
+                        <a href="{{ url_for('admin.Listar_pendentes') }}">Painel Admin</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout.logout') }}" class="nav-sair">⏻ Sair ({{ session.get('username') }})</a>
+                {% else %}
+                    <a href="{{ url_for('login.renderizar_login') }}" class="nav-destaque">Login</a>
+                {% endif %}
+
+                {% if request.cookies.get('tema', 'claro') == 'escuro' %}
+                    <a href="{{ url_for('homepage.alternar_tema', tema='claro') }}" class="tema-btn">☀️ Claro</a>
+                {% else %}
+                    <a href="{{ url_for('homepage.alternar_tema', tema='escuro') }}" class="tema-btn">🌙 Escuro</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <main class="container">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% if mensagens %}
+                <div class="flash-container">
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="flash flash-{{ categoria }}">{{ mensagem }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p><strong>GLB — Girls Like Books</strong></p>
+    </footer>
+
+</body>
+</html>

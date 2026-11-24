@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="secao-topo">
+    <h2 class="titulo-destaque">Minhas Obras</h2>
+    <p style="margin-top: 14px;">
+        <a class="btn btn-primario" href="{{ url_for('obras.renderizar_obras') }}">+ Criar Nova Obra</a>
+    </p>
+</div>
+
+<div class="obras-grid">
+    {% for obra in obras %}
+        <div class="obra-card scan-card">
+            <a href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}" class="capa-link">
+                <img src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
+            </a>
+            <div class="scan-card-body">
+                <h3>{{ obra["titulo"] }}</h3>
+                <p class="scan-status"><strong>Status:</strong> {{ obra["status"] }}</p>
+                {% if obra["tags"] %}
+                    <div class="tags-pills">
+                        {% for t in obra["tags"].split(",")[:3] %}
+                            <span class="pill-tag">{{ t.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <p>
+                    {% if obra["aprovada"] == 0 %}
+                        <span class="status-badge status-analise">⏳ Em análise</span>
+                    {% elif obra["aprovada"] == 1 %}
+                        <span class="status-badge status-aprovada">✅ Aprovada</span>
+                    {% elif obra["aprovada"] == -1 %}
+                        <span class="status-badge status-rejeitada">❌ Rejeitada</span>
+                    {% endif %}
+                </p>
+
+                {% if obra["aprovada"] == -1 and obra["justificativa"] %}
+                    <p><strong>Justificativa:</strong> {{ obra["justificativa"] }}</p>
+                {% endif %}
+
+                <div class="acoes">
+                    <a class="btn btn-primario" href="{{ url_for('capitulos.adicionar_capitulo', obra_id=obra['id']) }}">+ Capítulo</a>
+                    <a class="btn" href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}">Ver Obra</a>
+                    <a class="btn btn-secundario" href="{{ url_for('obras.Editar_obra', id_obra=obra['id']) }}">Editar</a>
+                    <form method="POST" action="{{ url_for('obras.Excluir_obra', id_obra=obra['id']) }}" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta obra e todos os seus capítulos?');">
+                        <button type="submit" class="btn-danger">Excluir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="texto-centro">Você ainda não cadastrou nenhuma obra. Clique em <strong>+ Criar Nova Obra</strong> acima para começar.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

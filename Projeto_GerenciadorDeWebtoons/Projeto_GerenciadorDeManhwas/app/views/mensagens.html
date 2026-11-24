@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="secao-topo">
+    <h2 class="titulo-destaque">Canal de Mensagens — Atualizações</h2>
+    <p class="texto-suave">Acompanhe aqui novos capítulos, comentários e atualizações das suas obras.</p>
+</div>
+
+<div class="mensagens-lista">
+    {% for m in mensagens %}
+        <div class="obra-card mensagem-item {% if 'Novo capítulo' in m['titulo'] %}msg-capitulo{% elif 'Comentário' in m['titulo'] or 'comentário' in m['titulo'] %}msg-comentario{% else %}msg-autor{% endif %}">
+            <div class="mensagem-cabecalho">
+                <div class="mensagem-titulo-grupo">
+                    <span class="msg-icone">
+                        {% if 'Novo capítulo' in m['titulo'] %}
+                            📖
+                        {% elif 'Comentário' in m['titulo'] or 'comentário' in m['titulo'] %}
+                            💬
+                        {% elif 'excluíd' in m['titulo'] %}
+                            🗑️
+                        {% else %}
+                            ✨
+                        {% endif %}
+                    </span>
+                    <h4>{{ m["titulo"] }}</h4>
+                </div>
+                <span class="msg-data">{{ m["data_envio"] }}</span>
+            </div>
+            <p class="mensagem-corpo">{{ m["conteudo"] }}</p>
+        </div>
+    {% else %}
+        <div class="obra-card texto-centro">
+            <h4>Tudo tranquilo por aqui!</h4>
+            <p class="texto-suave">Nenhuma atualização de comentários ou novos capítulos no momento.</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

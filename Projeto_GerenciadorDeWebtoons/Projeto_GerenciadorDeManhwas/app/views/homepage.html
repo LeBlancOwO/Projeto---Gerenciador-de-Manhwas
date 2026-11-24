@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% block hero %}
+<section class="carrossel-wrapper">
+    <div class="carrossel-container" id="carrosselObras">
+        {% if obras %}
+            <div class="carrossel-track">
+                {% for obra in obras[:6] %}
+                    <div class="carrossel-slide {% if loop.first %}ativo{% endif %}">
+                        <div class="carrossel-bg" style="background-image: url('{{ url_for('static', filename=obra['capa']) }}');"></div>
+                        <div class="carrossel-conteudo">
+                            <img class="carrossel-capa" src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
+                            <div class="carrossel-info">
+                                <span class="badge-destaque">★ DESTAQUE</span>
+                                <span class="status-badge status-aprovada">{{ obra["status"] }}</span>
+                                <h2>{{ obra["titulo"] }}</h2>
+                                {% if obra["tags"] %}
+                                    <div class="tags-pills">
+                                        {% for t in obra["tags"].split(",")[:5] %}
+                                            <span class="pill-tag">{{ t.strip() }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <a class="btn btn-primario" href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}">Ler Obra</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if obras|length > 1 %}
+                <button type="button" class="carrossel-seta prev" onclick="mudarSlide(-1)" aria-label="Anterior">&#10094;</button>
+                <button type="button" class="carrossel-seta next" onclick="mudarSlide(1)" aria-label="Próximo">&#10095;</button>
+                <div class="carrossel-dots">
+                    {% for obra in obras[:6] %}
+                        <button type="button" class="dot {% if loop.first %}ativo{% endif %}" onclick="irParaSlide({{ loop.index0 }})" aria-label="Slide {{ loop.index }}"></button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="carrossel-vazio">
+                <h2>Bem-vindo(a) à GLB — Girls Like Books</h2>
+                <p>Sua scan de manhwas e histórias favoritas em um ambiente acolhedor.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+    let slideAtual = 0;
+    const slides = document.querySelectorAll('.carrossel-slide');
+    const dots = document.querySelectorAll('.carrossel-dots .dot');
+
+    function mostrarSlide(indice) {
+        if (!slides.length) return;
+        slideAtual = (indice + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle('ativo', i === slideAtual));
+        dots.forEach((d, i) => d.classList.toggle('ativo', i === slideAtual));
+    }
+
+    function mudarSlide(delta) {
+        mostrarSlide(slideAtual + delta);
+    }
+
+    function irParaSlide(indice) {
+        mostrarSlide(indice);
+    }
+
+    if (slides.length > 1) {
+        setInterval(() => mudarSlide(1), 5000);
+    }
+</script>
+{% endblock %}
+
+{% block conteudo %}
+
+<section class="comunicados-secao">
+    <div class="secao-topo">
+        <h2 class="titulo-destaque">📢 Comunicados Importantes</h2>
+    </div>
+
+    {% if comunicados %}
+        <div class="comunicados-lista">
+            {% for com in comunicados %}
+                <div class="obra-card comunicado-card">
+                    <div class="comunicado-topo">
+                        <span class="badge-destaque">COMUNICADO</span>
+                        <small>{{ com["data_publicacao"] }} • por <strong>@{{ com["admin_username"] }}</strong></small>
+                    </div>
+                    <h3>{{ com["titulo"] }}</h3>
+                    <p style="white-space: pre-line;">{{ com["conteudo"] }}</p>
+                    {% if session.get('tipo') == 'admin' %}
+                        <form method="POST" action="{{ url_for('admin.Excluir_comunicado', id_comunicado=com['id']) }}" style="display:inline;" onsubmit="return confirm('Remover este comunicado?');">
+                            <button type="submit" class="btn-danger">Excluir Comunicado</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="texto-centro texto-suave">Nenhum comunicado publicado no momento.</p>
+    {% endif %}
+</section>
+
+<div class="secao-topo" style="margin-top: 32px;">
+    <h2 class="titulo-destaque">Catálogo de Obras</h2>
+    {% if session.get('username') %}
+        <p class="boas-vindas">Olá, <strong>{{ session["username"] }}</strong>! Explore os lançamentos abaixo.</p>
+    {% else %}
+        <p class="boas-vindas">
+            <a class="btn btn-primario" href="{{ url_for('login.renderizar_login') }}">Entrar na sua conta</a>
+        </p>
+    {% endif %}
+</div>
+
+<form method="GET" action="{{ url_for('homepage.renderizar_homepage') }}" class="obra-card filtro-card">
+    <div class="filtro-form">
+        <input type="text" name="busca" placeholder="Buscar por título..." value="{{ busca or '' }}">
+        <select name="status">
+            <option value="">Todos os status</option>
+            <option value="Em andamento" {% if status_filtro == 'Em andamento' %}selected{% endif %}>Em andamento</option>
+            <option value="Concluído" {% if status_filtro == 'Concluído' %}selected{% endif %}>Concluído</option>
+            <option value="Abandonada" {% if status_filtro == 'Abandonada' %}selected{% endif %}>Abandonada</option>
+            <option value="Hiatus" {% if status_filtro == 'Hiatus' %}selected{% endif %}>Hiatus</option>
+        </select>
+        <button type="submit" class="btn-primario">Filtrar</button>
+        <a class="btn btn-secundario" href="{{ url_for('homepage.renderizar_homepage') }}">Limpar</a>
+    </div>
+
+    <details {% if tags_incluir or tags_excluir %}open{% endif %}>
+        <summary><strong>Filtrar por Tags (Incluir / Excluir)</strong></summary>
+        <div class="filtro-tags-grupos">
+            <div>
+                <p><strong>✅ Quero estas tags:</strong></p>
+                <div class="tags-grid">
+                    {% for t in tags_padrao %}
+                        <label class="tag-chip">
+                            <input type="checkbox" name="tags_incluir" value="{{ t }}" {% if t in tags_incluir %}checked{% endif %}>
+                            <span>{{ t }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <p><strong>❌ Não quero estas tags:</strong></p>
+                <div class="tags-grid">
+                    {% for t in tags_padrao %}
+                        <label class="tag-chip tag-chip-excluir">
+                            <input type="checkbox" name="tags_excluir" value="{{ t }}" {% if t in tags_excluir %}checked{% endif %}>
+                            <span>{{ t }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </details>
+</form>
+
+<div class="obras-grid">
+    {% for obra in obras %}
+        <div class="obra-card scan-card">
+            <a href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}" class="capa-link">
+                <img src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
+            </a>
+            <div class="scan-card-body">
+                <h3>{{ obra["titulo"] }}</h3>
+                <p class="scan-status">{{ obra["status"] }}</p>
+                {% if obra["tags"] %}
+                    <div class="tags-pills">
+                        {% for t in obra["tags"].split(",")[:3] %}
+                            <span class="pill-tag">{{ t.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="acoes">
+                    <a class="btn btn-primario" href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}">Ver Obra</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="texto-centro">Nenhuma obra aprovada encontrada.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2>{{ obra["titulo"] }} — {{ capitulo["titulo"] }}</h2>
+<p class="texto-centro">
+    <small>
+        Por <a href="{{ url_for('perfil.ver_perfil_publico', id_usuario=obra['usuario_id']) }}" class="autor-link-destaque">@{{ obra["autor_username"] }}</a>
+        • Lançado em: {{ capitulo["data_lancamento"] or "Data não informada" }}
+    </small>
+    {% if session.get('user_id') %}
+        <span class="badge-lido">✓ Lido</span>
+    {% endif %}
+</p>
+
+<div class="obra-card">
+    <p style="white-space: pre-line;">{{ capitulo["conteudo"] }}</p>
+</div>
+
+<div class="acoes">
+    <a class="btn" href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}">Voltar para capítulos</a>
+    {% if anterior_id %}
+        <a class="btn" href="{{ url_for('capitulos.ler_capitulo', id_capitulo=anterior_id) }}">← Capítulo anterior</a>
+    {% endif %}
+    {% if proximo_id %}
+        <a class="btn" href="{{ url_for('capitulos.ler_capitulo', id_capitulo=proximo_id) }}">Próximo capítulo →</a>
+    {% endif %}
+</div>
+
+<section class="comentarios-secao">
+    <h3>Comentários ({{ comentarios|length }})</h3>
+
+    {% if session.get('user_id') %}
+        <form method="POST" action="{{ url_for('capitulos.comentar_capitulo', id_capitulo=capitulo['id']) }}" class="obra-card form-comentario">
+            <label>Deixe seu comentário:</label>
+            <textarea name="texto" rows="3" placeholder="O que achou deste capítulo?" required></textarea>
+            <br><br>
+            <button type="submit" class="btn-primario">Publicar Comentário</button>
+        </form>
+    {% else %}
+        <p class="texto-centro"><a href="{{ url_for('login.renderizar_login') }}">Faça login</a> para comentar neste capítulo.</p>
+    {% endif %}
+
+    {% for com in comentarios %}
+        <div class="obra-card comentario-card">
+            <div class="comentario-topo">
+                <a href="{{ url_for('perfil.ver_perfil_publico', id_usuario=com['usuario_id']) }}" class="comentario-autor-link">
+                    {% if com["foto"] %}
+                        <img class="avatar-mini" src="{{ url_for('static', filename=com['foto']) }}" alt="{{ com['username'] }}">
+                    {% else %}
+                        <div class="avatar-mini avatar-placeholder">{{ com["username"][0]|upper }}</div>
+                    {% endif %}
+                    <strong>{{ com["username"] }}</strong>
+                </a>
+                {% if com["usuario_id"] == obra["usuario_id"] %}
+                    <span class="badge-autor">✍️ Autor</span>
+                {% endif %}
+                <small>• {{ com["data_criacao"] }}</small>
+            </div>
+            <p class="comentario-texto">{{ com["texto"] }}</p>
+            {% if session.get('user_id') == com['usuario_id'] %}
+                <div class="acoes acoes-esquerda">
+                    <form method="POST" action="{{ url_for('capitulos.excluir_comentario', id_comentario=com['id']) }}">
+                        <input type="hidden" name="capitulo_id" value="{{ capitulo['id'] }}">
+                        <button type="submit" class="btn-danger">Excluir comentário</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="texto-centro">Nenhum comentário neste capítulo ainda.</p>
+    {% endfor %}
+</section>
+
+{% endblock %}

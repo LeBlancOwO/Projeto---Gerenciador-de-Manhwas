@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<h2>403 — Acesso negado</h2>
+<p>Você não tem permissão para acessar esta área.</p>
+<a class="btn" href="{{ url_for('homepage.renderizar_homepage') }}">Voltar para a Home</a>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<h2>Desaprovar Obra</h2>
+
+<form method="POST" action="/admin/desaprovar/salvar/{{ id_obra }}">
+
+    <label>Justificativa:</label>
+
+    <br>
+
+    <textarea name="justificativa" rows="6" cols="60" required></textarea>
+
+    <br><br>
+
+    <button type="submit">Desaprovar</button>
+
+</form>
+
+{% endblock %}

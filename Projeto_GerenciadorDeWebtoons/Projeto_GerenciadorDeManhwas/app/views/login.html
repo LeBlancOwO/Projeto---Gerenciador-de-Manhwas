@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="auth-wrapper">
+    <div class="obra-card auth-card">
+        <div class="auth-header">
+            <h2>Bem-vindo(a) de volta!</h2>
+            <p class="texto-suave">Entre na sua conta para acompanhar obras, comentar e publicar.</p>
+        </div>
+
+        <form action="/login/logar" method="POST" class="auth-form">
+            <div class="campo-grupo">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="campo-grupo">
+                <label>Senha</label>
+                <input type="password" name="senha" placeholder="Digite sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-primario btn-largo">Entrar</button>
+        </form>
+
+        <div class="auth-links">
+            <a href="{{ url_for('login.redefinir_senha') }}">Esqueceu a senha? Redefinir senha</a>
+            <a href="{{ url_for('cadastro.renderizar_cadastro') }}" class="auth-link-cadastro">Sem login? Cadastre-se aqui</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

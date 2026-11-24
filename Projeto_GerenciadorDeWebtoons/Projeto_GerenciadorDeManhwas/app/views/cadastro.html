@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2>Cadastro</h2>
+<h3>Faça seu cadastro:</h3>
+<br>
+
+<form action="/cadastro/cadastrar" method="POST" enctype="multipart/form-data">
+
+    <label>Nome:</label>
+    <input type="text" name="nome" required>
+    <br><br>
+
+    <label>E-mail:</label>
+    <input type="email" name="email" required>
+    <br><br>
+
+    <label>Username:</label>
+    <input type="text" name="username" required>
+    <br><br>
+
+    <label>Senha:</label>
+    <input type="password" name="senha" required>
+    <br><br>
+
+    <label>Foto de perfil (opcional):</label>
+    <input type="file" name="foto" accept="image/*">
+    <br><br>
+
+    <button type="submit">Cadastrar</button>
+
+</form>
+
+{% endblock %}

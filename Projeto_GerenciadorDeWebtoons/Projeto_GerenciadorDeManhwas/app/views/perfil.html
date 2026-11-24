@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2 class="titulo-destaque">Meu Perfil</h2>
+
+<div class="perfil-wrapper">
+    <div class="obra-card perfil-hero-card">
+        <div class="perfil-banner"></div>
+        <div class="perfil-cabecalho">
+            {% if usuario["foto"] %}
+                <img class="avatar avatar-grande" src="{{ url_for('static', filename=usuario['foto']) }}" alt="Foto de {{ usuario['username'] }}">
+            {% else %}
+                <div class="avatar avatar-grande avatar-placeholder">{{ usuario["username"][0]|upper }}</div>
+            {% endif %}
+            <h3>{{ usuario["nome"] }}</h3>
+            <p class="perfil-handle">@{{ usuario["username"] }}</p>
+            <span class="pill-tag">{{ usuario["tipo"]|capitalize }}</span>
+        </div>
+
+        <div class="perfil-dados-grid">
+            <div class="perfil-dado-item">
+                <span class="dado-label">Nome completo</span>
+                <strong>{{ usuario["nome"] }}</strong>
+            </div>
+            <div class="perfil-dado-item">
+                <span class="dado-label">Username</span>
+                <strong>{{ usuario["username"] }}</strong>
+            </div>
+            <div class="perfil-dado-item">
+                <span class="dado-label">E-mail</span>
+                <strong>{{ usuario["email"] }}</strong>
+            </div>
+            <div class="perfil-dado-item">
+                <span class="dado-label">Tipo de conta</span>
+                <strong>{{ usuario["tipo"]|capitalize }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="secao-topo" style="margin-top: 26px;">
+        <h3 class="titulo-destaque">Minhas Obras ({{ obras|length }})</h3>
+    </div>
+
+    <div class="obras-grid">
+        {% for obra in obras %}
+            <div class="obra-card scan-card">
+                <a href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}" class="capa-link">
+                    <img src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
+                </a>
+                <div class="scan-card-body">
+                    <h3>{{ obra["titulo"] }}</h3>
+                    <p class="scan-status">{{ obra["status"] }}</p>
+                    <p>
+                        {% if obra["aprovada"] == 0 %}
+                            <span class="status-badge status-analise">⏳ Em análise</span>
+                        {% elif obra["aprovada"] == 1 %}
+                            <span class="status-badge status-aprovada">✅ Aprovada</span>
+                        {% elif obra["aprovada"] == -1 %}
+                            <span class="status-badge status-rejeitada">❌ Rejeitada</span>
+                        {% endif %}
+                    </p>
+                    <div class="acoes">
+                        <a class="btn btn-primario" href="{{ url_for('capitulos.listar_capitulos', obra_id=obra['id']) }}">Ver Obra</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p class="texto-centro texto-suave">Você ainda não cadastrou nenhuma obra.</p>
+        {% endfor %}
+    </div>
+
+    <div class="perfil-acoes-grid" style="margin-top: 24px;">
+        <div class="obra-card">
+            <h4>Alterar Foto de Perfil</h4>
+            <p class="texto-suave">Escolha uma nova imagem para aparecer nos seus comentários e perfil.</p>
+            <form method="POST" action="{{ url_for('perfil.atualizar_foto') }}" enctype="multipart/form-data">
+                <input type="file" name="foto" accept="image/*" required>
+                <br><br>
+                <button type="submit" class="btn-primario">Salvar Nova Foto</button>
+            </form>
+        </div>
+
+        <div class="obra-card">
+            <h4>Segurança — Redefinir Senha</h4>
+            <form method="POST" action="{{ url_for('perfil.alterar_senha') }}">
+                <label>Senha atual:</label>
+                <input type="password" name="senha_atual" required>
+                <br><br>
+
+                <label>Nova senha:</label>
+                <input type="password" name="nova_senha" required>
+                <br><br>
+
+                <label>Confirmar nova senha:</label>
+                <input type="password" name="confirmar_senha" required>
+                <br><br>
+
+                <button type="submit" class="btn-primario">Alterar Senha</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="obra-card zona-perigo">
+        <h4>Excluir Conta</h4>
+        <p class="texto-suave">Ao deletar seu perfil, todas as suas obras, capítulos, comentários e histórico serão removidos permanentemente.</p>
+        <form method="POST" action="{{ url_for('perfil.deletar_perfil') }}" onsubmit="return confirm('Tem certeza que deseja deletar seu perfil permanentemente? Esta ação não pode ser desfeita.');">
+            <button type="submit" class="btn-danger">Deletar Perfil</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2>Adicione sua obra:</h2>
+<br>
+
+<form action="/obras/adicionar" method="POST" enctype="multipart/form-data">
+
+    <label>Título:</label>
+    <input type="text" name="titulo" value="{{ titulo or '' }}" required>
+    <br><br>
+
+    <label>Sinopse:</label>
+    <textarea name="sinopse" rows="6" required>{{ sinopse or '' }}</textarea>
+    <br><br>
+
+    <label>Tags (selecione pelo menos uma):</label>
+    <div class="tags-grid">
+        {% for tag in tags_padrao %}
+            <label class="tag-chip">
+                <input type="checkbox" name="tags" value="{{ tag }}" {% if tag in tags_selecionadas %}checked{% endif %}>
+                <span>{{ tag }}</span>
+            </label>
+        {% endfor %}
+    </div>
+    <br>
+
+    <label>Capa:</label>
+    <input type="file" name="capa" accept="image/*" required>
+    <br><br>
+
+    <button type="submit">Criar obra</button>
+    <br><br>
+
+</form>
+
+{% endblock %}

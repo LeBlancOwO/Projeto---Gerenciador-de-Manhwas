@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<h2>Redefinir Senha</h2>
+<p>Informe o e-mail e o username da sua conta para cadastrar uma nova senha.</p>
+
+<form method="POST" action="{{ url_for('login.redefinir_senha') }}">
+    <label>E-mail:</label>
+    <input type="email" name="email" value="{{ email or '' }}" required>
+    <br><br>
+
+    <label>Username:</label>
+    <input type="text" name="username" value="{{ username or '' }}" required>
+    <br><br>
+
+    <label>Nova senha (mín. 6 caracteres):</label>
+    <input type="password" name="nova_senha" required>
+    <br><br>
+
+    <label>Confirmar nova senha:</label>
+    <input type="password" name="confirmar_senha" required>
+    <br><br>
+
+    <button type="submit">Redefinir Senha</button>
+    <a class="btn" href="{{ url_for('login.renderizar_login') }}">Voltar ao Login</a>
+</form>
+
+{% endblock %}
