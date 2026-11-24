@@ -1,1 +1,0 @@
-# Projeto---Gerenciador-de-Manhwas
