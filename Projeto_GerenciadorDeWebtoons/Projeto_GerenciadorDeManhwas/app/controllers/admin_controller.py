@@ -2,6 +2,7 @@ from flask import Blueprint, session, render_template, redirect, request, flash,
 from app.utils.auth_middleware import login_required
 from app.models.obras import Obras
 from app.models.comunicado import Comunicado
+from app.models.mensagem import Mensagem
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -20,11 +21,22 @@ def Listar_pendentes():
 @admin_bp.route("/aprovar/<int:id_obra>")
 @login_required
 def Aprovar(id_obra):
-    """Aprova uma obra pendente para exibição no catálogo público."""
+    """Aprova uma obra pendente e envia notificação ao autor no canal de Mensagens."""
     if session.get("tipo") != "admin":
         abort(403)
 
+    obra = Obras.BuscarPorId(id_obra)
     Obras.Aprovar(id_obra)
+
+    if obra:
+        msg = Mensagem(
+            usuario_id=obra["usuario_id"],
+            categoria="atualizacoes",
+            titulo=f"Obra aprovada: '{obra['titulo']}'",
+            conteudo=f"Sua obra '{obra['titulo']}' foi aprovada pela administração e já está visível no catálogo público.",
+        )
+        msg.Salvar()
+
     current_app.logger.info("Obra id=%s aprovada pelo admin %s", id_obra, session.get("username"))
     flash("Obra aprovada com sucesso!", "success")
     return redirect("/admin/pendentes")
@@ -43,7 +55,7 @@ def renderizar_desaprovacao(id_obra):
 @admin_bp.route("/desaprovar/salvar/<int:id_obra>", methods=["POST"])
 @login_required
 def Salvar_desaprovacao(id_obra):
-    """Registra a desaprovação da obra com a justificativa informada."""
+    """Registra a desaprovação com justificativa e envia notificação ao autor no canal de Mensagens."""
     if session.get("tipo") != "admin":
         abort(403)
 
@@ -52,7 +64,18 @@ def Salvar_desaprovacao(id_obra):
         flash("A justificativa deve ter pelo menos 5 caracteres.", "error")
         return redirect(f"/admin/desaprovar/{id_obra}")
 
+    obra = Obras.BuscarPorId(id_obra)
     Obras.Desaprovar(id_obra, justificativa)
+
+    if obra:
+        msg = Mensagem(
+            usuario_id=obra["usuario_id"],
+            categoria="atualizacoes",
+            titulo=f"Obra desaprovada: '{obra['titulo']}'",
+            conteudo=f"Sua obra '{obra['titulo']}' foi desaprovada pela administração. Justificativa: {justificativa}",
+        )
+        msg.Salvar()
+
     current_app.logger.info("Obra id=%s desaprovada pelo admin %s", id_obra, session.get("username"))
     flash("Obra desaprovada com justificativa salva.", "info")
     return redirect("/admin/pendentes")

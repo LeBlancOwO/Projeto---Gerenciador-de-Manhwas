@@ -4,16 +4,20 @@
 
 <div class="secao-topo">
     <h2 class="titulo-destaque">Canal de Mensagens — Atualizações</h2>
-    <p class="texto-suave">Acompanhe aqui novos capítulos, comentários e atualizações das suas obras.</p>
+    <p class="texto-suave">Acompanhe aqui novos capítulos, comentários, moderação e atualizações das suas obras.</p>
 </div>
 
 <div class="mensagens-lista">
     {% for m in mensagens %}
-        <div class="obra-card mensagem-item {% if 'Novo capítulo' in m['titulo'] %}msg-capitulo{% elif 'Comentário' in m['titulo'] or 'comentário' in m['titulo'] %}msg-comentario{% else %}msg-autor{% endif %}">
+        <div class="obra-card mensagem-item {% if 'Novo capítulo' in m['titulo'] or 'Obra aprovada' in m['titulo'] %}msg-capitulo{% elif 'Comentário' in m['titulo'] or 'comentário' in m['titulo'] %}msg-comentario{% else %}msg-autor{% endif %}">
             <div class="mensagem-cabecalho">
                 <div class="mensagem-titulo-grupo">
                     <span class="msg-icone">
-                        {% if 'Novo capítulo' in m['titulo'] %}
+                        {% if 'Obra aprovada' in m['titulo'] %}
+                            ✅
+                        {% elif 'Obra desaprovada' in m['titulo'] %}
+                            ❌
+                        {% elif 'Novo capítulo' in m['titulo'] %}
                             📖
                         {% elif 'Comentário' in m['titulo'] or 'comentário' in m['titulo'] %}
                             💬

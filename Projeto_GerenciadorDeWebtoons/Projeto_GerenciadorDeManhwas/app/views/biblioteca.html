@@ -2,7 +2,7 @@
 
 {% block conteudo %}
 
-<h2>Minha Biblioteca (Histórias Lidas)</h2>
+<h2 class="titulo-destaque">Minha Biblioteca (Histórias Lidas)</h2>
 
 <form method="GET" action="{{ url_for('obras.Biblioteca') }}" class="obra-card filtro-card">
     <div class="filtro-form">
@@ -18,11 +18,11 @@
         <a class="btn btn-secundario" href="{{ url_for('obras.Biblioteca') }}">Limpar</a>
     </div>
 
-    <details {% if tags_incluir or tags_excluir %}open{% endif %}>
-        <summary><strong>Filtrar por Tags (Incluir / Excluir)</strong></summary>
+    <details class="filtro-tags-detalhes" {% if tags_incluir or tags_excluir %}open{% endif %}>
+        <summary class="filtro-tags-summary">🏷️ Filtrar por Tags (Incluir / Excluir)</summary>
         <div class="filtro-tags-grupos">
-            <div>
-                <p><strong>✅ Quero estas tags:</strong></p>
+            <div class="filtro-tags-box filtro-box-incluir">
+                <p><strong>✅ Quero estas tags</strong></p>
                 <div class="tags-grid">
                     {% for t in tags_padrao %}
                         <label class="tag-chip">
@@ -32,8 +32,8 @@
                     {% endfor %}
                 </div>
             </div>
-            <div>
-                <p><strong>❌ Não quero estas tags:</strong></p>
+            <div class="filtro-tags-box filtro-box-excluir">
+                <p><strong>❌ Não quero estas tags</strong></p>
                 <div class="tags-grid">
                     {% for t in tags_padrao %}
                         <label class="tag-chip tag-chip-excluir">

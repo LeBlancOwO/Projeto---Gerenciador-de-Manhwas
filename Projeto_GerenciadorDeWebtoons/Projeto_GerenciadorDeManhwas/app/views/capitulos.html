@@ -2,66 +2,74 @@
 
 {% block conteudo %}
 
-<div class="obra-card obra-detalhe">
-    <div class="obra-capa-coluna">
-        <img src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
-        <div class="obra-meta-lateral">
+<div class="obra-card obra-detalhe-centralizada">
+    <img class="obra-capa-principal" src="{{ url_for('static', filename=obra['capa']) }}" alt="Capa de {{ obra['titulo'] }}">
+
+    <h2 class="titulo-destaque">{{ obra["titulo"] }}</h2>
+
+    <div class="autor-destaque-box">
+        <span>✍️ Autor:</span>
+        <a href="{{ url_for('perfil.ver_perfil_publico', id_usuario=obra['usuario_id']) }}" class="autor-link-destaque">
+            @{{ obra["autor_username"] }}
+        </a>
+    </div>
+
+    <div class="obra-status-tabela">
+        <div class="status-celula">
+            <span class="dado-label">Status da Obra</span>
             <span class="status-badge status-aprovada">{{ obra["status"] }}</span>
-            <span class="pill-tag">{{ capitulos|length }} capítulo(s)</span>
+        </div>
+        <div class="status-celula">
+            <span class="dado-label">Capítulos</span>
+            <strong>{{ capitulos|length }}</strong>
+        </div>
+        <div class="status-celula">
+            <span class="dado-label">Comentários</span>
+            <strong>{{ comentarios_obra|length }}</strong>
         </div>
     </div>
 
-    <div class="obra-info-coluna">
-        <h2 class="obra-titulo-pagina">{{ obra["titulo"] }}</h2>
-
-        <div class="autor-destaque-box">
-            <span>✍️ Autor:</span>
-            <a href="{{ url_for('perfil.ver_perfil_publico', id_usuario=obra['usuario_id']) }}" class="autor-link-destaque">
-                @{{ obra["autor_username"] }}
-            </a>
+    {% if obra["tags"] %}
+        <div class="tags-pills">
+            {% for t in obra["tags"].split(",") %}
+                <span class="pill-tag">{{ t.strip() }}</span>
+            {% endfor %}
         </div>
+    {% endif %}
 
-        {% if obra["tags"] %}
-            <div class="tags-pills tags-esquerda">
-                {% for t in obra["tags"].split(",") %}
-                    <span class="pill-tag">{{ t.strip() }}</span>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <div class="sinopse-box">
-            <strong>Sinopse</strong>
-            <p>{{ obra["sinopse"] }}</p>
-        </div>
-
-        {% if session.get('user_id') %}
-            <div class="acoes acoes-esquerda">
-                <form method="POST" action="{{ url_for('obras.Acompanhar_obra', obra_id=obra['id']) }}" style="display:inline;">
-                    {% if acompanhando %}
-                        <button type="submit" class="btn btn-secundario">✓ Acompanhando (Deixar de acompanhar)</button>
-                    {% else %}
-                        <button type="submit" class="btn btn-primario">+ Acompanhar Obra</button>
-                    {% endif %}
-                </form>
-            </div>
-        {% endif %}
+    <div class="sinopse-box sinopse-centralizada">
+        <strong>Sinopse</strong>
+        <p>{{ obra["sinopse"] }}</p>
     </div>
+
+    {% if session.get('user_id') %}
+        <div class="acoes">
+            <form method="POST" action="{{ url_for('obras.Acompanhar_obra', obra_id=obra['id']) }}" style="display:inline;">
+                {% if acompanhando %}
+                    <button type="submit" class="btn btn-secundario">✓ Acompanhando (Deixar de acompanhar)</button>
+                {% else %}
+                    <button type="submit" class="btn btn-primario">+ Acompanhar Obra</button>
+                {% endif %}
+            </form>
+        </div>
+    {% endif %}
 </div>
 
-<h3>Lista de Capítulos</h3>
+<h3 class="titulo-destaque" style="display: block; width: fit-content; margin: 24px auto 16px;">Lista de Capítulos</h3>
+
 {% for cap in capitulos %}
-    <div class="obra-card">
-        <div class="capitulo-header">
+    <div class="obra-card capitulo-linha">
+        <div class="capitulo-info">
             <h4>
                 {{ cap["titulo"] }}
                 {% if cap["id"] in lidos_ids %}
                     <span class="badge-lido">✓ Lido</span>
                 {% endif %}
             </h4>
-            <p><small>Lançado em: {{ cap["data_lancamento"] or "Data não informada" }}</small></p>
+            <p class="cap-data">Lançado em: {{ cap["data_lancamento"] or "Data não informada" }}</p>
         </div>
 
-        <div class="acoes">
+        <div class="capitulo-acoes">
             <a class="btn btn-primario" href="{{ url_for('capitulos.ler_capitulo', id_capitulo=cap['id']) }}">Ler capítulo</a>
             {% if eh_dono %}
                 <a class="btn" href="{{ url_for('capitulos.editar_capitulo', id_capitulo=cap['id']) }}">Editar</a>

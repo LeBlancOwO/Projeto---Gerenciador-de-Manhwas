@@ -1219,3 +1219,150 @@ body.tema-escuro .auth-links a.auth-link-cadastro {
     color: var(--texto-secundario);
     line-height: 1.5;
 }
+/* ==================== FILTRO DE TAGS ESTILIZADO, TABELA DE STATUS & CAPÍTULOS ALINHADOS ==================== */
+.filtro-tags-detalhes {
+    margin-top: 12px;
+}
+
+.filtro-tags-summary {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(141, 196, 240, 0.22), rgba(173, 174, 216, 0.25));
+    border: 1px solid var(--glb-azul-1);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    list-style: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.filtro-tags-summary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(141, 196, 240, 0.3);
+}
+
+.filtro-tags-box {
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid var(--borda);
+    background-color: var(--bg-pagina);
+}
+
+.filtro-box-incluir {
+    border-top: 4px solid var(--glb-azul-1);
+}
+
+.filtro-box-excluir {
+    border-top: 4px solid var(--glb-terracota);
+}
+
+.tag-chip {
+    background-color: var(--bg-card);
+    transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.tag-chip:hover {
+    border-color: var(--glb-azul-1);
+    transform: translateY(-1px);
+}
+
+.tag-chip:has(input:checked) {
+    background: linear-gradient(135deg, var(--glb-azul-1), var(--glb-roxo-1));
+    border-color: transparent;
+}
+
+.tag-chip:has(input:checked) span {
+    color: #000000;
+}
+
+.tag-chip-excluir:has(input:checked) {
+    background: linear-gradient(135deg, var(--glb-terracota), var(--glb-pessego-1));
+    border-color: transparent;
+}
+
+.tag-chip-excluir:has(input:checked) span {
+    color: #000000;
+}
+
+/* Página da obra centralizada e tabela de status */
+.obra-detalhe-centralizada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 28px 24px;
+}
+
+.obra-capa-principal {
+    width: 220px;
+    height: 310px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 3px solid var(--glb-azul-1);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.obra-status-tabela {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 560px;
+    margin: 6px 0;
+}
+
+.status-celula {
+    background-color: var(--bg-pagina);
+    border: 1px solid var(--borda);
+    border-top: 3px solid var(--glb-roxo-1);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.sinopse-centralizada {
+    max-width: 780px;
+    width: 100%;
+    text-align: center;
+    border-left: none;
+    border-top: 4px solid var(--glb-azul-1);
+}
+
+/* Lista de capítulos com título à esquerda e botão Ler capítulo à direita */
+.capitulo-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.capitulo-info h4 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.cap-data {
+    margin: 0;
+    font-size: 13px;
+    color: var(--texto-secundario);
+}
+
+.capitulo-acoes {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .obra-status-tabela {
+        grid-template-columns: 1fr;
+    }
+}
